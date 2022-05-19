@@ -127,13 +127,26 @@ jobs:
             --build-arg FILE_NAME=${{ github.event.repository.name }}
       - name: Generate lambda zip
         run: docker compose up
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
+      # We have to unzip the produced lambda zip because of limitations with the
+      # GitHub UI. Any files uploaded are packaged into a single zip to allow a
+      # user to download the artifacts of a build. This issue:
+      # https://github.com/actions/upload-artifact/issues/14
+      # is the best source for possible updates. Once the UI is updated we will
+      # most likely be able leverage the functionality of upload-artifact v2(+)
+      # to upload a single file as an artifact. Until then we extract the
+      # contents to the "lambda_zip_contents" directory to let
+      # actions/upload-artifacts repackage them for availability on GitHub.
+      - name: Unzip generated zip
+        run: |
+          unzip ${{ github.event.repository.name }}.zip \
+            -d lambda_zip_contents
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
         with:
           name: "${{ github.event.repository.name }}-\
             py${{ matrix.python-version }}-\
             ${{ env.GH_SHORT_SHA }}"
-          path: "${{ github.event.repository.name }}.zip"
+          path: lambda_zip_contents/
       - name: Setup tmate debug session
         uses: mxschmitt/action-tmate@v3
         if: env.RUN_TMATE
