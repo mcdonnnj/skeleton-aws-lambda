@@ -5,7 +5,8 @@ set -o errexit
 set -o pipefail
 
 PY_VERSION="${BUILD_PY_VERSION:-3.9}"
-ARTIFACT_FILE_NAME="${BUILD_FILE_NAME:-lambda-package.zip}"
+# Use the current directory name
+ARTIFACT_FILE_NAME="${BUILD_FILE_NAME:-${PWD##*/}}.zip"
 
 output_directory="/var/task/output"
 artifact_path="$output_directory/$ARTIFACT_FILE_NAME"
