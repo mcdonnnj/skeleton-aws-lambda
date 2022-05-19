@@ -6,3 +6,6 @@
 __pycache__
 .mypy_cache
 .python-version
+
+## Artifacts ##
+lambda-package.zip
