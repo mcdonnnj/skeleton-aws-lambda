@@ -122,7 +122,7 @@ jobs:
         # image per:
         # https://docs.docker.com/develop/develop-images/build_enhancements/
         run: |
-          docker compose build \
+          DOCKER_BUILDKIT=1 docker compose build \
             --build-arg PY_VERSION=${{ matrix.python-version }} \
             --build-arg FILE_NAME=${{ github.event.repository.name }}
       - name: Generate lambda zip
